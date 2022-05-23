@@ -10,7 +10,8 @@
     "com.sorceressspell.librarioh.core": "0.3.0",
     "com.sorceressspell.librarioh.math": "0.2.0",
     "com.sorceressspell.librarioh.timers": "0.2.0",
-    "com.sorceressspell.librarioh.unity.pools": "0.1.0"
+    "com.sorceressspell.librarioh.unity.pools": "0.1.0",
+    "com.unity.modules.audio": "1.0.0"
   },
   "author": {
     "name": "Sorceress' Spell",
