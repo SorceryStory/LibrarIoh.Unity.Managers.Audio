@@ -1,0 +1,27 @@
+{
+    "name": "SorceressSpell.LibrarIoh.Unity.Managers.Audio",
+    "rootNamespace": "SorceressSpell.LibrarIoh.Unity.Managers.Audio",
+    "references": [
+        "SorceressSpell.LibrarIoh.Collections",
+        "SorceressSpell.LibrarIoh.Core",
+        "SorceressSpell.LibrarIoh.Math",
+        "SorceressSpell.LibrarIoh.Timers",
+        "SorceressSpell.LibrarIoh.Unity.Pools",
+        "SorceressSpell.LibrarIoh.Unity.Managers.Time"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.sorceressspell.librarioh.unity.managers.time",
+            "expression": "",
+            "define": "SORCERESSSPELL_LIBRARIOH_UNITY_MANAGERS_TIME"
+        }
+    ],
+    "noEngineReferences": false
+}
