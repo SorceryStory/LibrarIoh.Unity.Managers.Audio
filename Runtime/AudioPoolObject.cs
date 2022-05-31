@@ -4,12 +4,6 @@ using UnityEngine;
 
 namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 {
-    public enum OnMute
-    {
-        DoNothing,
-        Deactivate,
-    }
-
     public class AudioPoolObject : GameObjectPoolObject
     {
         #region Enums
@@ -27,7 +21,7 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 
         public bool AffectedByTimescale;
         private AudioSource _audioSource;
-        private OnMute _onMute;
+        private OnMuteBehaviour _onMute;
         private UpdateTimer _timer;
         private TimerAction _timerAction;
         private Transform _transform;
@@ -52,10 +46,10 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 
         public void Mute(float time)
         {
-            Mute(time, OnMute.DoNothing);
+            Mute(time, OnMuteBehaviour.DoNothing);
         }
 
-        public void Mute(float time, OnMute onMute)
+        public void Mute(float time, OnMuteBehaviour onMute)
         {
             if (!_audioSource.mute && _timer.IsPaused)
             {
@@ -64,6 +58,27 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 
                 _onMute = onMute;
             }
+        }
+
+        public void Pause()
+        {
+            _audioSource.Pause();
+        }
+
+        public void Play()
+        {
+            _audioSource.Play();
+        }
+
+        public void Play(float startingTime)
+        {
+            _audioSource.time = startingTime;
+            _audioSource.Play();
+        }
+
+        public void Stop()
+        {
+            _audioSource.Stop();
         }
 
         public void Unmute(float time)
@@ -119,11 +134,15 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 
                         switch (_onMute)
                         {
-                            case OnMute.Deactivate:
+                            case OnMuteBehaviour.Pause:
+                                Pause();
+                                break;
+
+                            case OnMuteBehaviour.Deactivate:
                                 Deactivate();
                                 break;
 
-                            case OnMute.DoNothing:
+                            case OnMuteBehaviour.DoNothing:
                             default:
                                 break;
                         }
