@@ -1,6 +1,6 @@
 ﻿namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 {
-    public enum OnMuteBehaviour
+    public enum VolumeTimerEndBehaviour
     {
         DoNothing,
         Pause,

@@ -1,4 +1,5 @@
-﻿using SorceressSpell.LibrarIoh.Timers;
+﻿using SorceressSpell.LibrarIoh.Math;
+using SorceressSpell.LibrarIoh.Timers;
 using SorceressSpell.LibrarIoh.Unity.Pools;
 using UnityEngine;
 
@@ -6,24 +7,15 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 {
     public class AudioPoolObject : GameObjectPoolObject
     {
-        #region Enums
-
-        private enum TimerAction
-        {
-            None,
-            Mute,
-            Unmute
-        }
-
-        #endregion Enums
-
         #region Fields
 
         public bool AffectedByTimescale;
         private AudioSource _audioSource;
-        private OnMuteBehaviour _onMute;
-        private UpdateTimer _timer;
-        private TimerAction _timerAction;
+        private bool _timerMuteEnd;
+        private UpdateTimer _timerVolume;
+        private float _timerVolumeEnd;
+        private VolumeTimerEndBehaviour _timerVolumeEndBehaviour;
+        private float _timerVolumeStart;
         private Transform _transform;
 
         #endregion Fields
@@ -46,17 +38,14 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 
         public void Mute(float time)
         {
-            Mute(time, OnMuteBehaviour.DoNothing);
+            Mute(time, VolumeTimerEndBehaviour.DoNothing);
         }
 
-        public void Mute(float time, OnMuteBehaviour onMute)
+        public void Mute(float time, VolumeTimerEndBehaviour endBehaviour)
         {
-            if (!_audioSource.mute && _timer.IsPaused)
+            if (!_audioSource.mute)
             {
-                _timer.Reset(time, true);
-                _timerAction = TimerAction.Mute;
-
-                _onMute = onMute;
+                SetVolumeOverTime(_audioSource.volume, 0f, time, true, endBehaviour);
             }
         }
 
@@ -76,6 +65,23 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
             _audioSource.Play();
         }
 
+        public void SetVolumeOverTime(float volumeStart, float volumeEnd, float time)
+        {
+            SetVolumeOverTime(volumeStart, volumeEnd, time, false, VolumeTimerEndBehaviour.DoNothing);
+        }
+
+        public void SetVolumeOverTime(float volumeStart, float volumeEnd, float time, bool muteEnd, VolumeTimerEndBehaviour endBehaviour)
+        {
+            _timerMuteEnd = muteEnd;
+
+            _timerVolumeStart = volumeStart;
+            _timerVolumeEnd = volumeEnd;
+
+            _timerVolume.Reset(time, true);
+
+            _timerVolumeEndBehaviour = endBehaviour;
+        }
+
         public void Stop()
         {
             _audioSource.Stop();
@@ -83,12 +89,16 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 
         public void Unmute(float time)
         {
-            if (_audioSource.mute && _timer.IsPaused)
+            Unmute(1f, time);
+        }
+
+        public void Unmute(float volumeEnd, float time)
+        {
+            if (_audioSource.mute)
             {
                 _audioSource.mute = false;
 
-                _timer.Reset(time, true);
-                _timerAction = TimerAction.Unmute;
+                SetVolumeOverTime(0f, volumeEnd, time, false, VolumeTimerEndBehaviour.DoNothing);
             }
         }
 
@@ -111,8 +121,7 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
                 _audioSource = GameObject.AddComponent<AudioSource>();
             }
 
-            _timer = new UpdateTimer(0f, true, TimerEndBehaviour.Pause);
-            _timerAction = TimerAction.None;
+            _timerVolume = new UpdateTimer(0f, true, TimerEndBehaviour.Pause);
         }
 
         protected override void GameObjectPoolObject_OnUpdate(float deltaTime)
@@ -122,53 +131,29 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
                 Deactivate();
             }
 
-            switch (_timerAction)
+            if (_timerVolume.Update(deltaTime))
             {
-                case TimerAction.Mute:
-                    if (_timer.Update(deltaTime))
-                    {
-                        _audioSource.mute = true;
-                        _audioSource.volume = 0f;
+                _audioSource.mute = _timerMuteEnd;
+                _audioSource.volume = _timerVolumeEnd;
 
-                        _timerAction = TimerAction.None;
+                switch (_timerVolumeEndBehaviour)
+                {
+                    case VolumeTimerEndBehaviour.Pause:
+                        Pause();
+                        break;
 
-                        switch (_onMute)
-                        {
-                            case OnMuteBehaviour.Pause:
-                                Pause();
-                                break;
+                    case VolumeTimerEndBehaviour.Deactivate:
+                        Deactivate();
+                        break;
 
-                            case OnMuteBehaviour.Deactivate:
-                                Deactivate();
-                                break;
-
-                            case OnMuteBehaviour.DoNothing:
-                            default:
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        _audioSource.volume = 1 - _timer.ElapsedTimePercentage;
-                    }
-                    break;
-
-                case TimerAction.Unmute:
-                    if (_timer.Update(deltaTime))
-                    {
-                        _audioSource.volume = 1f;
-
-                        _timerAction = TimerAction.None;
-                    }
-                    else
-                    {
-                        AudioSource.volume = _timer.ElapsedTimePercentage;
-                    }
-                    break;
-
-                case TimerAction.None:
-                default:
-                    break;
+                    case VolumeTimerEndBehaviour.DoNothing:
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                _audioSource.volume = MathOperations.LerpClamp(_timerVolumeStart, _timerVolumeEnd, _timerVolume.ElapsedTimePercentage);
             }
         }
 
