@@ -6,9 +6,9 @@
   "unity": "2018.1",
   "description": "LibrarIoh.Unity.Managers.Audio (https://github.com/SorceryStory/LibrarIoh.Unity.Managers.Audio)\n\nLibrarIoh's Audio Manager for Unity.\n\nDepends on:\n  - LibrarIoh.Collections (https://github.com/SorceryStory/LibrarIoh.Collections)\n  - LibrarIoh.Core (https://github.com/SorceryStory/LibrarIoh.Core)\n  - LibrarIoh.Math (https://github.com/SorceryStory/LibrarIoh.Math)\n  - LibrarIoh.Timers (https://github.com/SorceryStory/LibrarIoh.Timers)\n  - LibrarIoh.Unity.Pools (https://github.com/SorceryStory/LibrarIoh.Unity.Pools)\n\nIntegrates with:\n  - LibrarIoh.Unity.Managers.Time (https://github.com/SorceryStory/LibrarIoh.Unity.Managers.Time)",
   "dependencies": {
-    "com.sorceressspell.librarioh.collections": "0.3.0",
+    "com.sorceressspell.librarioh.collections": "0.3.1",
     "com.sorceressspell.librarioh.core": "0.3.0",
-    "com.sorceressspell.librarioh.math": "0.4.0",
+    "com.sorceressspell.librarioh.math": "0.5.1",
     "com.sorceressspell.librarioh.timers": "0.2.1",
     "com.sorceressspell.librarioh.unity.pools": "0.1.0",
     "com.unity.modules.audio": "1.0.0"
