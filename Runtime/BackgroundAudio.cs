@@ -11,7 +11,7 @@ namespace SorceressSpell.LibrarIoh.Unity.Managers.Audio
 
         private AudioSource _auxSource;
         private AudioSource _mainSource;
-        private UpdateTimer _transitionTimer;
+        private readonly UpdateTimer _transitionTimer;
 
         #endregion Fields
 
